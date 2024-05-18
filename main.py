@@ -1,16 +1,37 @@
-# This is a sample Python script.
+import requests
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# Ваша модель даних
+class WeatherData:
+    def __init__(self, location, temperature, condition, wind_speed, humidity):
+        self.location = location
+        self.temperature = temperature
+        self.condition = condition
+        self.wind_speed = wind_speed
+        self.humidity = humidity
 
+    def __str__(self):
+        return (f"Weather in {self.location}:\n"
+                f"Temperature: {self.temperature}°C\n"
+                f"Condition: {self.condition}\n"
+                f"Wind Speed: {self.wind_speed} kph\n"
+                f"Humidity: {self.humidity}%")
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+def get_weather(api_key, location):
+    url = f"http://api.weatherapi.com/v1/current.json?key={api_key}&q={location}&aqi=no"
+    response = requests.get(url)
+    data = response.json()
 
+    location_name = data['location']['name']
+    temperature = data['current']['temp_c']
+    condition = data['current']['condition']['text']
+    wind_speed = data['current']['wind_kph']
+    humidity = data['current']['humidity']
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+    return WeatherData(location_name, temperature, condition, wind_speed, humidity)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+# 'YOUR_API_KEY' - API-ключ
+api_key = '9004aa0307464ced9ec91759241805'
+location = 'Kyiv'
+
+weather_data = get_weather(api_key, location)
+print(weather_data)
